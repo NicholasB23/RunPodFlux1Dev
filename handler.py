@@ -35,6 +35,7 @@ def load_model():
     model = FluxPipeline.from_pretrained(
         "black-forest-labs/FLUX.1-dev",
         torch_dtype=torch.float16,  # Using float16 for better GPU performance
+        device_map="balanced", # Use balanced devices to utilize GPU
         cache_dir="/tmp/huggingface",  # Explicit cache directory
         local_files_only=False  # Force new download if needed
     )

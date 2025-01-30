@@ -96,6 +96,5 @@ watchdog==6.0.0
 watchfiles==1.0.4
 wcwidth==0.2.13
 websockets==14.2
-xformers
 yarl==1.18.3
 zipp==3.21.0
