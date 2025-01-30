@@ -6,6 +6,19 @@ from io import BytesIO
 import os
 import base64
 
+# # Adjustable paramaters for model configuration
+
+# How closely the model follows the prompt
+model_guidance_scale = 3.5
+# Height in pixels of the generated image
+model_height = 768
+# Width in pixels of the generated image
+model_width = 1360
+# Number of times a model attempts to improve its prediction of an image. Higher is better but slower to generate
+model_num_inference_steps = 50
+
+
+# Get the Hugging Face access token from an environment variable for access to restricted models
 HF_TOKEN = os.environ["HUGGING_FACE_HUB_TOKEN"]
 login(token=HF_TOKEN)
 
@@ -22,7 +35,6 @@ def load_model():
     model = FluxPipeline.from_pretrained(
         "black-forest-labs/FLUX.1-dev",
         torch_dtype=torch.float16,  # Using float16 for better GPU performance
-        device_map="balanced",  # Auto changed to balanced for this model
         cache_dir="/tmp/huggingface",  # Explicit cache directory
         resume_download=True,  # Resume interrupted downloads
         local_files_only=False  # Force new download if needed
@@ -44,19 +56,20 @@ def generate_image_from_prompt(event):
     if not prompt:
         return {
             "statusCode": 400,
-            "error": "No text provided for analysis."
+            "error": "No prompt provided for image generation."
             }
 
     try:
         output = model(
             prompt=prompt,
-            guidance_scale=3.5,
-            height=768,
-            width=1360,
-            num_inference_steps=50,
+            guidance_scale=model_guidance_scale,
+            height=model_height,
+            width=model_width,
+            num_inference_steps=model_num_inference_steps,
         )
         pil_image = output.images[0]
 
+        # Convert pil_image to Base64 to be returned in the API response
         buffered = BytesIO()
         pil_image.save(buffered, format="PNG")
         img_str = base64.b64encode(buffered.getvalue()).decode()
