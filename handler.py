@@ -36,7 +36,6 @@ def load_model():
         "black-forest-labs/FLUX.1-dev",
         torch_dtype=torch.float16,  # Using float16 for better GPU performance
         cache_dir="/tmp/huggingface",  # Explicit cache directory
-        resume_download=True,  # Resume interrupted downloads
         local_files_only=False  # Force new download if needed
     )
 
